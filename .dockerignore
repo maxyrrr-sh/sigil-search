@@ -1,0 +1,10 @@
+target
+**/target
+**/node_modules
+frontend/dist
+siem/target
+data
+**/*.log
+.git
+.claude
+*.zip

@@ -1,0 +1,18 @@
+[package]
+name = "sigil-api"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "HTTP API incl. Elasticsearch-compatible endpoints (DESIGN section 10)"
+
+[dependencies]
+sigil-core = { workspace = true }
+sigil-index = { workspace = true }
+sigil-ingest = { workspace = true }
+sigil-schema = { workspace = true }
+sigil-query = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }

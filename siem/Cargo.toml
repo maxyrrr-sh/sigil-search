@@ -1,0 +1,41 @@
+# sigil-siem (plugin pack) — an example SIEM distribution built PURELY as plugins
+# on the UNMODIFIED Sigil Search core.
+#
+# This is an independent Cargo workspace (not a member of the sigil-search
+# workspace). It depends on the platform crates by path and adds security
+# behavior only via the sigil-core extension traits — proving Phase 7's claim:
+# "sigil-siem runs on an unmodified Sigil Search core." In production this would
+# be its own repository with these same `siem-*` crates.
+[workspace]
+resolver = "2"
+members = [
+    "crates/siem-ocsf",
+    "crates/siem-sigma",
+    "crates/siem-alert",
+    "crates/siem-correlate",
+    "crates/siem-cli",
+]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.75"
+license = "Apache-2.0"
+
+[workspace.dependencies]
+# Platform crates — referenced by path, never modified.
+sigil-core = { path = "../crates/sigil-core" }
+sigil-ingest = { path = "../crates/sigil-ingest" }
+sigil-plugin = { path = "../crates/sigil-plugin" }
+
+# SIEM plugin crates.
+siem-ocsf = { path = "crates/siem-ocsf" }
+siem-sigma = { path = "crates/siem-sigma" }
+siem-alert = { path = "crates/siem-alert" }
+siem-correlate = { path = "crates/siem-correlate" }
+
+anyhow = "1"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = "1"

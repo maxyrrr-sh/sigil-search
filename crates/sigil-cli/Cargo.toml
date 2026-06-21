@@ -1,0 +1,24 @@
+[package]
+name = "sigil-cli"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Sigil Search command-line entrypoint (the `sigil-search` binary)"
+
+[[bin]]
+name = "sigil-search"
+path = "src/main.rs"
+
+[dependencies]
+sigil-core = { workspace = true }
+sigil-config = { workspace = true }
+sigil-ingest = { workspace = true }
+sigil-schema = { workspace = true }
+sigil-index = { workspace = true }
+sigil-api = { workspace = true }
+sigil-cluster = { workspace = true }
+sigil-plugin = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }

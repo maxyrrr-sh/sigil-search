@@ -1,0 +1,9 @@
+[package]
+name = "siem-correlate"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Signal correlation + provenance graph (StorageBackend plugin) for Sigil Search"
+
+[dependencies]
+sigil-core = { workspace = true }

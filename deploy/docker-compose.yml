@@ -1,0 +1,81 @@
+# Full Sigil stack: the Rust backend + the EUI frontend.
+#
+#   docker compose -f deploy/docker-compose.yml up --build
+#     -> UI at  http://localhost:8080
+#     -> API at http://localhost:9595  (ES _bulk on :9200, OTLP on :4317, syslog udp :5514)
+#
+# The optional `full` profile adds the declared-but-not-yet-consumed scale-out
+# dependencies (Redpanda transport, MinIO object store). The app falls back to
+# the in-process bus / local tier today, so they are off by default:
+#   docker compose -f deploy/docker-compose.yml --profile full up --build
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: sigil-search:dev
+    command: ["run", "/etc/sigil/sigil.yaml"]
+    volumes:
+      - ./sigil-docker.yaml:/etc/sigil/sigil.yaml:ro
+      - sigil-data:/data
+    ports:
+      - "9595:9595"     # query API (search / sql / query)
+      - "9200:9200"     # Elasticsearch-compatible _bulk / _search
+      - "4317:4317"     # OTLP/HTTP logs
+      - "5514:5514/udp" # syslog
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9595/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: sigil-frontend:dev
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  # --- optional scale-out dependencies (profile: full) ----------------------
+  # Declared in the design (Redpanda transport §5, MinIO cold tier §8) but not
+  # yet wired into the app — included so the "full stack" is documented.
+  redpanda:
+    image: redpandadata/redpanda:latest
+    profiles: ["full"]
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --overprovisioned
+      - --node-id=0
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    profiles: ["full"]
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: sigil
+      MINIO_ROOT_PASSWORD: sigil-secret
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # console
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+volumes:
+  sigil-data:
+  minio-data:

@@ -1,0 +1,16 @@
+[package]
+name = "sigil-query"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Query engine: SQL (DataFusion) + pipe-DSL + query-string (DESIGN section 9)"
+
+[dependencies]
+sigil-core = { workspace = true }
+sigil-index = { workspace = true }
+datafusion = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }

@@ -1,0 +1,20 @@
+[package]
+name = "siem-cli"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "The `sigil-siem` binary — assembles the SIEM plugins on the Sigil Search core"
+
+[[bin]]
+name = "sigil-siem"
+path = "src/main.rs"
+
+[dependencies]
+sigil-core = { workspace = true }
+sigil-ingest = { workspace = true }
+sigil-plugin = { workspace = true }
+siem-ocsf = { workspace = true }
+siem-sigma = { workspace = true }
+siem-alert = { workspace = true }
+siem-correlate = { workspace = true }
+anyhow = { workspace = true }

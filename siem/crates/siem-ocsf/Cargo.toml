@@ -1,0 +1,10 @@
+[package]
+name = "siem-ocsf"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "OCSF normalization Schema plugin for Sigil Search"
+
+[dependencies]
+sigil-core = { workspace = true }
+regex = { workspace = true }

@@ -1,0 +1,12 @@
+[package]
+name = "siem-sigma"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Sigma detection-rule Detector plugin for Sigil Search"
+
+[dependencies]
+sigil-core = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }

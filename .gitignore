@@ -1,0 +1,29 @@
+# Rust
+/target
+**/*.rs.bk
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Env / secrets
+.env
+*.local
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Sigil runtime data
+/data
+*.log
+
+# Snapshots / archives
+*.zip
+
+.claude/
+CLAUDE.md

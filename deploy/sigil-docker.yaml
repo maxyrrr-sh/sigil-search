@@ -1,0 +1,37 @@
+# Sigil Search config for the Docker stack. Unlike the dev config, every input
+# and the API bind to 0.0.0.0 so they are reachable across the compose network.
+version: 1
+
+cluster:
+  targets: [all]
+  transport:
+    kind: inproc          # monolith; switch to redpanda for the `full` profile
+
+inputs:
+  - id: syslog_main
+    type: syslog
+    listen: 0.0.0.0:5514
+    codec: { type: syslog, rfc: 5424 }
+  - id: es_bulk
+    type: http_bulk        # Elasticsearch-compatible _bulk
+    listen: 0.0.0.0:9200
+  - id: otlp
+    type: otlp             # OpenTelemetry logs (OTLP/HTTP JSON)
+    listen: 0.0.0.0:4317
+
+pipelines:
+  - id: default
+    from: [syslog_main, es_bulk, otlp]
+    steps:
+      - normalize: { schema: ecs }
+      - drain
+      - enrich: [geoip]
+    route:
+      - to: index
+
+index:
+  dir: /data/index
+  retention: { hot: 7d, warm: 30d, cold: 365d }
+
+api:
+  listen: 0.0.0.0:9595

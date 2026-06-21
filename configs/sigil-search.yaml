@@ -1,0 +1,54 @@
+# Sigil Search - example platform configuration.
+# Validate with:  sigil-search config validate ./configs/sigil-search.yaml
+# Reference: docs/DESIGN.md §12.
+version: 1
+
+cluster:
+  targets: [all]                 # or e.g. [ingest, index] on this node
+  object_store:
+    kind: s3
+    bucket: sigil-cold
+    endpoint: http://minio:9000
+  transport:
+    kind: redpanda               # default distributed bus (Kafka protocol)
+    brokers: ["redpanda:9092"]
+    # kind: inproc               # monolith mode needs no broker
+
+inputs:
+  - id: syslog_main
+    type: syslog
+    listen: 0.0.0.0:5514
+    codec: { type: syslog, rfc: 5424 }
+
+  - id: es_bulk
+    type: http_bulk             # Elasticsearch-compatible _bulk ingest
+    listen: 0.0.0.0:9200
+
+  - id: otlp
+    type: otlp                  # OpenTelemetry logs
+    listen: 0.0.0.0:4317
+
+pipelines:
+  - id: default
+    from: [syslog_main, es_bulk, otlp]
+    steps:
+      - normalize: { schema: ecs }   # default schema; OCSF is a plugin (SIEM)
+      - drain                        # mine message templates -> template_id
+      - enrich: [geoip]              # classify source/client/host IP scope
+      # - mask: { fields: [message] }  # redact emails/IPs in a field (opt-in)
+      - drop: { when: "log.level == debug" }
+    route:
+      - to: index                    # or: { to: deadletter, when: "..." }
+
+index:
+  retention: { hot: 7d, warm: 30d, cold: 365d }
+  rollover_secs: 3600              # roll hot -> cold Parquet segment hourly
+
+query:
+  languages: [sql, dsl, query_string]
+
+plugins:
+  - name: my_custom_processor
+    kind: wasm
+    path: ./plugins/my_processor.wasm
+    capabilities: ["read:field:message"]

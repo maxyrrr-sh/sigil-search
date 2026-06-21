@@ -1,0 +1,12 @@
+title: Curl Pipe To Shell
+id: 00000000-0000-0000-0000-000000000002
+level: critical
+tags: [attack.t1059]
+logsource:
+  product: linux
+detection:
+  selection:
+    message|contains:
+      - "curl http"
+      - "| bash"
+  condition: selection

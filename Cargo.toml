@@ -1,0 +1,52 @@
+# Sigil Search — ELK-analog platform (Cargo workspace).
+# Full architecture: docs/DESIGN.md
+# The SIEM distribution (`sigil-siem`) is a SEPARATE repo that depends on these crates.
+[workspace]
+resolver = "2"
+members = [
+    "crates/sigil-core",
+    "crates/sigil-ingest",
+    "crates/sigil-schema",
+    "crates/sigil-index",
+    "crates/sigil-query",
+    "crates/sigil-api",
+    "crates/sigil-cluster",
+    "crates/sigil-config",
+    "crates/sigil-plugin",
+    "crates/sigil-cli",
+]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.75"
+license = "Apache-2.0"
+repository = "https://github.com/your-org/sigil-search"
+
+# Shared dependency versions. Phase 0 pulls in real libraries (Tantivy, Tokio,
+# Axum, serde) for the first runnable vertical slice. `sigil-core` deliberately
+# uses none of these — it stays the dependency-light plugin contract.
+[workspace.dependencies]
+sigil-core = { path = "crates/sigil-core" }
+sigil-ingest = { path = "crates/sigil-ingest" }
+sigil-schema = { path = "crates/sigil-schema" }
+sigil-index = { path = "crates/sigil-index" }
+sigil-query = { path = "crates/sigil-query" }
+sigil-api = { path = "crates/sigil-api" }
+sigil-cluster = { path = "crates/sigil-cluster" }
+sigil-config = { path = "crates/sigil-config" }
+sigil-plugin = { path = "crates/sigil-plugin" }
+
+anyhow = "1"
+axum = "0.7"
+datafusion = "54"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+tantivy = "0.22"
+tokio = { version = "1", features = ["full"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

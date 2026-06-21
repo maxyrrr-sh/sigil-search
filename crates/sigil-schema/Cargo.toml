@@ -1,0 +1,9 @@
+[package]
+name = "sigil-schema"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Pluggable normalized schema, ECS default; schema-on-read fallback (DESIGN section 7)"
+
+[dependencies]
+sigil-core = { workspace = true }

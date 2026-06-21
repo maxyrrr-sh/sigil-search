@@ -1,0 +1,10 @@
+[package]
+name = "sigil-plugin"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Plugin host: trait registry + WASM (wasmtime) + gRPC sidecar; capabilities (DESIGN section 11)"
+
+[dependencies]
+sigil-core = { workspace = true }
+anyhow = { workspace = true }

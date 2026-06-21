@@ -1,0 +1,12 @@
+[package]
+name = "sigil-config"
+version = "0.0.0"
+edition = "2021"
+publish = false
+description = "Declarative config: validate/plan/apply, drift (DESIGN section 12)"
+
+[dependencies]
+sigil-core = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
